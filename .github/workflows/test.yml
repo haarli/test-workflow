@@ -1,0 +1,35 @@
+name: build package release
+on:
+  workflow_dispatch :
+    inputs:
+      release:
+        description: Create a github release
+        type: boolean
+        required: false
+        default: false
+
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [ build_on_linux, build_on_mac_with_codesign_notarization, build_on_win ]
+    if: ${{ github.event.inputs.release == 'true' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: get-package-version
+        id: package-version
+        uses: beaconbrigade/package-json-version@v0.3
+
+      - name: download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: v${{ steps.package-version.outputs.version }}
+          tag_name: v${{ steps.package-version.outputs.version }}
+          draft: true
+          prerelease: true
+
+
