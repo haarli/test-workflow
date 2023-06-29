@@ -28,7 +28,7 @@ jobs:
         with:
           name: v${{ steps.package-version.outputs.version }}
           tag_name: v${{ steps.package-version.outputs.version }}
-          draft: true
+          draft: false
           prerelease: true
 
 
